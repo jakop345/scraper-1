@@ -13,7 +13,7 @@ Usage
 Scraping YouTube playlist
 -------------------------
 
-After activating the virtual environment, simply call (inside `videodata` directory):
+After activating the virtual environment, simply call:
 
     scrapy runspider videodata/spiders/youtube_playlist.py \
         -a playlist_id=<playlist_id> \

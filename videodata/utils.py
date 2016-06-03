@@ -1,5 +1,6 @@
 from datetime import timedelta
 from functools import partial
+from collections import OrderedDict
 import re
 
 from slugify import slugify as _slugify
@@ -28,3 +29,12 @@ def duration_as_seconds(duration):
         delta *= -1
 
     return int(delta.total_seconds())
+
+
+def order_dict(dictionary, sort_using):
+    result = OrderedDict()
+
+    for key in sort_using:
+        result[key] = dictionary[key]
+
+    return result
