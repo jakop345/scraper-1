@@ -93,7 +93,7 @@ class YouTubePlaylistEventSpider(scrapy.Spider):
             description=snippet['description'],
             category=response.meta['event']['title'],
             quality_notes='',
-            language=languages.get(iso639_1_code=snippet['defaultAudioLanguage']).name,
+            language=languages.get(iso639_1_code=snippet.get('defaultAudioLanguage', 'en')).name,
             copyright_text=self.LICENSE_TYPES.get(data['status']['license'], data['status']['license']),
             thumbnail_url=thumbnail['url'],
             duration=duration,
