@@ -42,6 +42,12 @@ class PyVideoJsonWriterPipeline:
         'recorded',
     )
 
+    video_field_order = (
+        'length',
+        'url',
+        'type',
+    )
+
     def process_item(self, item, spider):
         if isinstance(item, CategoryItem):
             event_name = slugify(item['title'])
@@ -56,6 +62,12 @@ class PyVideoJsonWriterPipeline:
             videos_path = os.path.join(spider.settings['OUTPUT_DIR'], event_name, 'videos')
             os.makedirs(videos_path, exist_ok=True)
             video_json_path = os.path.join(videos_path, '{}.json'.format(slugify(item['title'])))
+
+            item['videos'] = [
+                order_dict(video, self.video_field_order)
+                for video in item['videos']
+            ]
+
             with open(video_json_path, 'w') as fp:
                 fp.write(self.encoder.encode(order_dict(item, self.video_fields_order)))
 

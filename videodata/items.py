@@ -11,14 +11,14 @@ import scrapy
 class VideoField(scrapy.item.Field):
     """Video contains the information about the type and location of the video"""
 
-    # video's URL
-    url = scrapy.Field()
-
     # video's length in seconds
     length = scrapy.Field()
 
+    # video's URL
+    url = scrapy.Field()
+
     # video's type/source (like: youtube)
-    video_type = scrapy.Field()
+    type = scrapy.Field()
 
 
 class VideoItem(scrapy.Item):
