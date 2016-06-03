@@ -3,6 +3,7 @@
 Scrapy==1.1.0
 pycodestyle==2.0.0
 awesome-slugify==1.6.5
+requests==2.10.0
 
 # Lastly install "self" in editable mode so videodata is an importable module from anywhere
 -e .
