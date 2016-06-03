@@ -1,28 +1,15 @@
 import json
-import re
 from urllib.parse import urlencode
 
 import scrapy
 
 from videodata import items, utils
+from videodata.spiders.base import BaseSpider
 
 from pycountry import languages
 
 
-EXTRACT_SPEAKERS_RE = re.compile('speaker[s]?: (.+)', re.IGNORECASE)
-
-
-def extract_speakers(text):
-    match = EXTRACT_SPEAKERS_RE.findall(text)
-
-    result = []
-    for line in match:
-        result += [speaker.strip() for speaker in line.split(',')]
-
-    return result
-
-
-class YouTubePlaylistEventSpider(scrapy.Spider):
+class YouTubePlaylistEventSpider(BaseSpider):
     """YouTube Playlist Event scraper for PyVideo/PyTube"""
 
     API_BASE_URL = 'https://www.googleapis.com/youtube/v3/'
@@ -42,9 +29,12 @@ class YouTubePlaylistEventSpider(scrapy.Spider):
         """To run the spider, it's necessary to pass playlist_id and (optionally) an api_key.
 
         For example:
-        $ scrapy runspider videodata/videodata/spiders/youtube_playlist.py \
+        $ scrapy runspider videodata/spiders/youtube_playlist.py \
             -a playlist_id=<PlaylistID> \
             -a api_key=<GoogleAPIKey>
+
+        :param playlist_id : a playlist ID extracted from the YouTube URL's list query parameter
+        :param api_key : Google's API Key
         """
         super().__init__(*args, **kwargs)
 
@@ -87,7 +77,7 @@ class YouTubePlaylistEventSpider(scrapy.Spider):
         url = self.WEB_VIDEO_URL.format(video_id=data['id'])
         duration = utils.duration_as_seconds(data['contentDetails']['duration'])
 
-        yield items.VideoItem(
+        video_item = items.VideoItem(
             title=snippet['title'],
             summary='',
             description=snippet['description'],
@@ -101,13 +91,16 @@ class YouTubePlaylistEventSpider(scrapy.Spider):
             recorded=snippet['publishedAt'][0:10],
             slug=utils.slugify(snippet['title']),
             tags=[],
-            speakers=extract_speakers(snippet['description']),
             videos=[{
                 'length': duration,
                 'url': url,
                 'type': 'youtube',
             }]
         )
+
+        video_item['speakers'] = self.extract_speakers(video_item)
+
+        yield video_item
 
     def generate_talks_url(self, page_token=None):
         """Generate talks API URL"""
