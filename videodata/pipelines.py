@@ -8,7 +8,7 @@ import os
 
 from scrapy.utils.serialize import ScrapyJSONEncoder
 
-from videodata.text_tools import slugify
+from slugify import slugify
 from videodata.items import VideoItem, CategoryItem
 
 
