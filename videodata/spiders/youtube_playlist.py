@@ -6,6 +6,8 @@ import scrapy
 
 from videodata import items, utils
 
+from pycountry import languages
+
 
 EXTRACT_SPEAKERS_RE = re.compile('speaker[s]?: (.+)', re.IGNORECASE)
 
@@ -90,8 +92,8 @@ class YouTubePlaylistEventSpider(scrapy.Spider):
             summary='',
             description=snippet['description'],
             category=response.meta['event']['title'],
-            quality_notes=data['contentDetails']['definition'],
-            language=snippet['defaultAudioLanguage'],
+            quality_notes='',
+            language=languages.get(iso639_1_code=snippet.get('defaultAudioLanguage', 'en')).name,
             copyright_text=self.LICENSE_TYPES.get(data['status']['license'], data['status']['license']),
             thumbnail_url=thumbnail['url'],
             duration=duration,

@@ -8,12 +8,45 @@ import os
 
 from scrapy.utils.serialize import ScrapyJSONEncoder
 
-from videodata.text_tools import slugify
+from videodata.utils import slugify, order_dict
 from videodata.items import VideoItem, CategoryItem
 
 
 class PyVideoJsonWriterPipeline:
-    encoder = ScrapyJSONEncoder(indent=2, ensure_ascii=False)
+    encoder = ScrapyJSONEncoder(indent=2, ensure_ascii=False, sort_keys=False)
+
+    # since PyVideo cares about the fields order and Scrapy doesn't support that, let's define it here:
+    category_fields_order = (
+        'title',
+        'description',
+        'url',
+        'start_date',
+        'slug',
+    )
+
+    video_fields_order = (
+        'category',
+        'slug',
+        'title',
+        'summary',
+        'description',
+        'quality_notes',
+        'language',
+        'copyright_text',
+        'thumbnail_url',
+        'duration',
+        'videos',
+        'source_url',
+        'tags',
+        'speakers',
+        'recorded',
+    )
+
+    video_field_order = (
+        'length',
+        'url',
+        'type',
+    )
 
     def process_item(self, item, spider):
         if isinstance(item, CategoryItem):
@@ -22,14 +55,20 @@ class PyVideoJsonWriterPipeline:
             os.makedirs(event_path, exist_ok=True)
             category_json_path = os.path.join(event_path, 'category.json')
             with open(category_json_path, 'w') as fp:
-                fp.write(self.encoder.encode(item))
+                fp.write(self.encoder.encode(order_dict(item, self.category_fields_order)))
 
         elif isinstance(item, VideoItem):
             event_name = slugify(item['category'])
             videos_path = os.path.join(spider.settings['OUTPUT_DIR'], event_name, 'videos')
             os.makedirs(videos_path, exist_ok=True)
             video_json_path = os.path.join(videos_path, '{}.json'.format(slugify(item['title'])))
+
+            item['videos'] = [
+                order_dict(video, self.video_field_order)
+                for video in item['videos']
+            ]
+
             with open(video_json_path, 'w') as fp:
-                fp.write(self.encoder.encode(item))
+                fp.write(self.encoder.encode(order_dict(item, self.video_fields_order)))
 
         return item

@@ -1,6 +1,8 @@
 from unittest import TestCase
+from collections import OrderedDict
 
-from ..videodata.spiders import youtube_playlist
+from videodata.spiders import youtube_playlist
+from videodata import utils
 
 
 class TextToolsTestCase(TestCase):
@@ -34,3 +36,17 @@ class TextToolsTestCase(TestCase):
         self.assertIn('First Speaker', speakers)
         self.assertIn('高 國棟', speakers)
         self.assertIn('Łąki Łan', speakers)
+
+    def test_order_dict(self):
+        dictionary = {
+            'a': 1,
+            'b': 3,
+            '0': 2,
+            'z': 0,
+        }
+
+        sort_using = ('z', 'a', '0', 'b')
+
+        ordered_dict = utils.order_dict(dictionary, sort_using)
+
+        self.assertEqual(sort_using, tuple(ordered_dict.keys()))
