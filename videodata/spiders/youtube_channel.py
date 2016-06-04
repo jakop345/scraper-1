@@ -5,22 +5,10 @@ from urllib.parse import urlencode
 import scrapy
 
 from videodata import items, utils
+from videodata.spiders.base import BaseSpider
 
 
-EXTRACT_SPEAKERS_RE = re.compile('speaker[s]?: (.+)', re.IGNORECASE)
-
-
-def extract_speakers(text):
-    match = EXTRACT_SPEAKERS_RE.findall(text)
-
-    result = []
-    for line in match:
-        result += [speaker.strip() for speaker in line.split(',')]
-
-    return result
-
-
-class YouTubeChannelSpider(scrapy.Spider):
+class YouTubeChannelSpider(BaseSpider):
     """YouTube Playlist Event scraper for PyVideo/PyTube"""
 
     API_BASE_URL = 'https://www.googleapis.com/youtube/v3/'
