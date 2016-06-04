@@ -40,7 +40,7 @@ class YouTubeChannelSpider(scrapy.Spider):
         """To run the spider, it's necessary to pass channel_id and (optionally) an api_key.
 
         For example:
-        $ scrapy runspider videodata/videodata/spiders/youtube_channel.py \
+        $ scrapy runspider videodata/spiders/youtube_channel.py \
             -a channel_id=<ChannelID> \
             -a api_key=<GoogleAPIKey>
         """
