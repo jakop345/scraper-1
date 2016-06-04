@@ -91,3 +91,9 @@ OUTPUT_DIR = os.path.join(os.getcwd(), 'scraped_data')
 # HTTPCACHE_DIR = 'httpcache'
 # HTTPCACHE_IGNORE_HTTP_CODES = []
 # HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+
+# Secret-ish values
+# These are values that should never be checked in, but supplied via ENV vars or other magic.
+VIMEO_API_KEY = os.environ.get('VIMEO_API_KEY', None)
+YOUTUBE_API_KEY = os.environ.get('YOUTUBE_API_KEY', None)
