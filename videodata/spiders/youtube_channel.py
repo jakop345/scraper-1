@@ -4,23 +4,12 @@ from urllib.parse import urlencode
 
 import scrapy
 
+from pycountry import languages
 from videodata import items, utils
+from videodata.spiders.base import BaseSpider
 
 
-EXTRACT_SPEAKERS_RE = re.compile('speaker[s]?: (.+)', re.IGNORECASE)
-
-
-def extract_speakers(text):
-    match = EXTRACT_SPEAKERS_RE.findall(text)
-
-    result = []
-    for line in match:
-        result += [speaker.strip() for speaker in line.split(',')]
-
-    return result
-
-
-class YouTubeChannelSpider(scrapy.Spider):
+class YouTubeChannelSpider(BaseSpider):
     """YouTube Playlist Event scraper for PyVideo/PyTube"""
 
     API_BASE_URL = 'https://www.googleapis.com/youtube/v3/'
@@ -91,7 +80,7 @@ class YouTubeChannelSpider(scrapy.Spider):
             description=snippet['description'],
             category=response.meta['event']['title'],
             quality_notes=data['contentDetails']['definition'],
-            language=snippet['defaultAudioLanguage'],
+            language=languages.get(iso639_1_code=snippet.get('defaultAudioLanguage', 'en')).name,
             copyright_text=self.LICENSE_TYPES.get(data['status']['license'], data['status']['license']),
             thumbnail_url=thumbnail['url'],
             duration=duration,
