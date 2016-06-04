@@ -4,6 +4,7 @@ from urllib.parse import urlencode
 
 import scrapy
 
+from pycountry import languages
 from videodata import items, utils
 from videodata.spiders.base import BaseSpider
 
@@ -79,7 +80,7 @@ class YouTubeChannelSpider(BaseSpider):
             description=snippet['description'],
             category=response.meta['event']['title'],
             quality_notes=data['contentDetails']['definition'],
-            language=snippet['defaultAudioLanguage'],
+            language=languages.get(iso639_1_code=snippet.get('defaultAudioLanguage', 'en')).name,
             copyright_text=self.LICENSE_TYPES.get(data['status']['license'], data['status']['license']),
             thumbnail_url=thumbnail['url'],
             duration=duration,
