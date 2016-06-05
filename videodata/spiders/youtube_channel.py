@@ -1,5 +1,4 @@
 import json
-import re
 from urllib.parse import urlencode
 
 import scrapy
@@ -88,7 +87,7 @@ class YouTubeChannelSpider(BaseSpider):
             recorded=snippet['publishedAt'][0:10],
             slug=utils.slugify(snippet['title']),
             tags=[],
-            speakers=extract_speakers(snippet['description']),
+            speakers=self.extract_speakers(snippet['description']),
             videos=[{
                 'length': duration,
                 'url': url,
